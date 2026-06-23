@@ -1,0 +1,41 @@
+/*
+ * Paleta de Ionic. Acento "tomate" + dorado para puntajes.
+ * El tema oscuro se fuerza desde global.scss (dark.always.css).
+ */
+:root {
+  /** primary — tomate **/
+  --ion-color-primary: #fa5252;
+  --ion-color-primary-rgb: 250, 82, 82;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #dc4848;
+  --ion-color-primary-tint: #fb6363;
+
+  /** secondary — verde (puntaje usuarios) **/
+  --ion-color-secondary: #21d07a;
+  --ion-color-secondary-rgb: 33, 208, 122;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #1db76b;
+  --ion-color-secondary-tint: #37d587;
+
+  /** tertiary — dorado (puntaje críticos / estrellas) **/
+  --ion-color-tertiary: #f5c518;
+  --ion-color-tertiary-rgb: 245, 197, 24;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #d8ad15;
+  --ion-color-tertiary-tint: #f6cb2f;
+
+  /** success / warning / danger / medium / dark / light: defaults Ionic **/
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  /* Variables propias usadas en componentes */
+  --app-user-color: #21d07a;
+  --app-critic-color: #f5c518;
+}

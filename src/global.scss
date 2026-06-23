@@ -1,0 +1,38 @@
+/*
+ * RottenTomatos — estilos globales
+ * Ionic core + utilidades + paleta oscura forzada.
+ */
+
+/* Core CSS requerido por Ionic */
+@import '@ionic/angular/css/core.css';
+
+/* CSS base recomendado */
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+
+/* Utilidades opcionales */
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+/* Tema oscuro siempre activo (estilo cine) */
+@import '@ionic/angular/css/palettes/dark.always.css';
+
+/* ---- Helpers de la app ---- */
+.app-muted {
+  color: var(--ion-color-medium);
+}
+
+.app-section-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+}

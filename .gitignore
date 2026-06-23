@@ -1,0 +1,27 @@
+# Dependencies
+/node_modules
+
+# Angular / build output
+/dist
+/www
+/out-tsc
+/.angular
+
+# Capacitor native
+/android
+/ios
+
+# Misc
+/.sourcemaps
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# IDE
+/.idea
+/.vscode
+
+# Contexto local (no versionar)
+CLAUDE.md
+handoff.md
