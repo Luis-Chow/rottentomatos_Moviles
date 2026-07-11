@@ -5,5 +5,5 @@
 // Si despliegas el backend (Railway/Render), pon aquí esa URL https.
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.100.90:4000',
+  apiUrl: 'https://rottentomatosmovilesbackend-production.up.railway.app',
 };
