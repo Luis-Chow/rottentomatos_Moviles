@@ -1,11 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonAvatar, IonButton, IonIcon,
   IonInput, IonItem, IonLabel, IonToggle,
   AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
+import { MyReview } from '../../models';
+import { StarRatingComponent } from '../../components/star-rating.component';
+import { ExpandableTextComponent } from '../../components/expandable-text.component';
 
 @Component({
   selector: 'app-profile',
@@ -13,6 +18,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonAvatar, IonButton, IonIcon,
     IonInput, IonItem, IonLabel, IonToggle,
+    StarRatingComponent, ExpandableTextComponent,
   ],
   template: `
     <ion-header>
@@ -64,6 +70,28 @@ import { AuthService } from '../../services/auth.service';
         </div>
 
         <div class="card">
+          <h3 class="app-section-title">⭐ Mis reseñas ({{ data.myReviews().length }})</h3>
+          @if (data.myReviews().length === 0) {
+            <p class="app-muted">Aún no has escrito reseñas.</p>
+          } @else {
+            @for (r of data.myReviews(); track r.id) {
+              <div class="rev" (click)="openMovie(r)">
+                @if (r.movie?.poster) { <img class="poster" [src]="r.movie!.poster" alt="poster" /> }
+                @else { <div class="poster empty-poster">🎬</div> }
+                <div class="rinfo">
+                  <h4>{{ r.movie?.title || 'Título' }}</h4>
+                  <div class="stars-row">
+                    <app-star-rating [value]="r.rating" [size]="13" [color]="r.isCritic ? '#f5c518' : '#21d07a'"></app-star-rating>
+                    <span class="score">{{ r.rating.toFixed(1) }}</span>
+                  </div>
+                  @if (r.text) { <app-expandable-text [text]="r.text" [limit]="120"></app-expandable-text> }
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <div class="card">
           <ion-button expand="block" color="medium" (click)="logout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>Cerrar sesión
           </ion-button>
@@ -90,15 +118,35 @@ import { AuthService } from '../../services/auth.service';
     .small { font-size: 12px; color: var(--ion-color-medium); white-space: normal; }
     .row { display: flex; gap: 12px; margin-top: 16px; }
     .row ion-button { flex: 1; }
+    .card .app-section-title { margin-top: 0; }
+    .rev { display: flex; gap: 12px; padding: 10px 0; cursor: pointer; border-top: 1px solid var(--ion-color-step-150, #374151); }
+    .rev:first-of-type { border-top: none; }
+    .poster { width: 44px; height: 66px; flex: 0 0 auto; border-radius: 8px; object-fit: cover; background: var(--ion-color-step-150, #374151); }
+    .empty-poster { display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .rinfo { flex: 1; min-width: 0; }
+    .rinfo h4 { font-size: 14px; font-weight: 700; margin: 0; }
+    .stars-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .score { font-size: 12px; font-weight: 700; }
   `],
 })
 export class ProfilePage {
   auth = inject(AuthService);
+  data = inject(DataService);
+  private router = inject(Router);
   private alertCtrl = inject(AlertController);
   private toast = inject(ToastController);
 
   editing = signal(false);
   loading = signal(false);
+
+  ionViewWillEnter(): void {
+    // Mantiene actualizada la lista de "Mis reseñas" del perfil.
+    this.data.refresh();
+  }
+
+  openMovie(r: MyReview): void {
+    if (r.movie) this.router.navigate(['/movies', r.movie.id]);
+  }
 
   name = '';
   email = '';

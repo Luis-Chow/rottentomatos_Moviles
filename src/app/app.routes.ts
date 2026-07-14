@@ -46,6 +46,18 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/review-form/review-form.page').then((m) => m.ReviewFormPage),
   },
+  {
+    // Perfil público de un usuario (sus reseñas)
+    path: 'users/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/user-profile/user-profile.page').then((m) => m.UserProfilePage),
+  },
+  {
+    // Perfil de un actor (?id=<tmdbPersonId>&name=<nombre>)
+    path: 'person',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/person/person.page').then((m) => m.PersonPage),
+  },
   { path: '', redirectTo: 'tabs/catalog', pathMatch: 'full' },
   { path: '**', redirectTo: 'tabs/catalog' },
 ];

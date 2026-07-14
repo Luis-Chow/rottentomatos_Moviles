@@ -8,10 +8,21 @@ export interface User {
   createdAt: string;
 }
 
+// Perfil público de otro usuario (sin email)
+export interface PublicUser {
+  id: string;
+  name: string;
+  avatar?: string;
+  isCritic: boolean;
+  createdAt: string;
+  reviewsCount: number;
+}
+
 // ---- Películas / Series ----
 export type MediaType = 'movie' | 'tv';
 
 export interface CastMember {
+  tmdbPersonId?: number; // id de la persona en TMDB (0 en títulos cacheados antiguos)
   name: string;
   character?: string;
   photo?: string;
@@ -54,6 +65,31 @@ export interface TmdbResult {
   tmdbScore?: number;
   inLibrary?: boolean;   // true si ya existe en nuestra DB
   localId?: string;      // id local si ya existe
+}
+
+// ---- Actores (perfil TMDB) ----
+export interface PersonCredit {
+  tmdbId: number;
+  mediaType: MediaType;
+  title: string;
+  poster?: string;
+  releaseDate?: string;
+  character?: string;
+  tmdbScore?: number;
+  inLibrary?: boolean; // true si ya existe en nuestra DB
+  localId?: string;    // id local si ya existe
+}
+
+export interface Person {
+  tmdbId: number;
+  name: string;
+  biography: string;
+  photo?: string;
+  birthday?: string;
+  deathday?: string;
+  placeOfBirth?: string;
+  knownFor?: string;
+  credits: PersonCredit[]; // películas/series donde aparece
 }
 
 // ---- Reseñas / Comentarios ----

@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
-  User, Movie, Review, MyReview, TmdbResult, MediaType, MovieFilters,
+  User, PublicUser, Movie, Review, MyReview, TmdbResult, MediaType, MovieFilters, Person,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -39,6 +39,15 @@ export class ApiService {
     return this.http.delete<{ ok: true }>(`${this.base}/users/me`);
   }
 
+  // Perfil público de otro usuario y sus reseñas
+  getUser(id: string): Observable<{ user: PublicUser }> {
+    return this.http.get<{ user: PublicUser }>(`${this.base}/users/${id}`);
+  }
+
+  listUserReviews(id: string): Observable<{ reviews: MyReview[] }> {
+    return this.http.get<{ reviews: MyReview[] }>(`${this.base}/users/${id}/reviews`);
+  }
+
   // ---- Catálogo ----
   listMovies(filters?: MovieFilters): Observable<{ movies: Movie[] }> {
     let params = new HttpParams();
@@ -64,6 +73,14 @@ export class ApiService {
 
   importMovie(tmdbId: number, mediaType: MediaType): Observable<{ movie: Movie }> {
     return this.http.post<{ movie: Movie }>(`${this.base}/tmdb/import`, { tmdbId, mediaType });
+  }
+
+  // Perfil de actor (por id de TMDB, o por nombre si el título cacheado no lo guardó)
+  getPerson(opts: { id?: number; name?: string }): Observable<{ person: Person }> {
+    let params = new HttpParams();
+    if (opts.id) params = params.set('id', String(opts.id));
+    if (opts.name) params = params.set('name', opts.name);
+    return this.http.get<{ person: Person }>(`${this.base}/tmdb/person`, { params });
   }
 
   // ---- Reseñas / Comentarios (CRUD) ----

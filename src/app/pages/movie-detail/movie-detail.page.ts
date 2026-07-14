@@ -9,10 +9,11 @@ import {
 import { ApiService } from '../../services/api.service';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
-import { Movie, Review } from '../../models';
+import { Movie, Review, CastMember } from '../../models';
 import { httpErrorMessage } from '../../utils/error';
 import { StarRatingComponent } from '../../components/star-rating.component';
 import { ScoreBadgeComponent } from '../../components/score-badge.component';
+import { ExpandableTextComponent } from '../../components/expandable-text.component';
 
 @Component({
   selector: 'app-movie-detail',
@@ -20,7 +21,7 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
   imports: [
     IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent,
     IonIcon, IonButton, IonChip, IonSpinner, IonAvatar,
-    StarRatingComponent, ScoreBadgeComponent,
+    StarRatingComponent, ScoreBadgeComponent, ExpandableTextComponent,
   ],
   template: `
     <ion-header>
@@ -72,7 +73,7 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
             <h3 class="app-section-title">🎭 Reparto</h3>
             <div class="hscroll">
               @for (c of m.cast; track $index) {
-                <div class="cast">
+                <div class="cast" (click)="openPerson(c)">
                   @if (c.photo) { <img [src]="c.photo" alt="actor" /> }
                   @else { <div class="cast-empty">👤</div> }
                   <span class="cname">{{ c.name }}</span>
@@ -107,7 +108,7 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
                 <app-star-rating [value]="mine.rating" [size]="18" [color]="userColor()"></app-star-rating>
                 <span class="myscore">{{ mine.rating.toFixed(1) }} / 5</span>
               </div>
-              @if (mine.text) { <p class="rtext">{{ mine.text }}</p> }
+              @if (mine.text) { <app-expandable-text [text]="mine.text"></app-expandable-text> }
               <div class="my-actions">
                 <ion-button size="small" fill="solid" color="medium" (click)="editReview(mine.id)">
                   <ion-icon slot="start" name="create-outline"></ion-icon>Editar
@@ -131,12 +132,12 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
           } @else {
             @for (r of otherReviews(); track r.id) {
               <div class="review">
-                <ion-avatar class="ava">
+                <ion-avatar class="ava" (click)="openUser(r)">
                   @if (r.author?.avatar) { <img [src]="r.author!.avatar" alt="avatar" /> }
                   @else { <div class="ava-letter">{{ (r.author?.name || '?').charAt(0).toUpperCase() }}</div> }
                 </ion-avatar>
                 <div class="rbody">
-                  <div class="rname">
+                  <div class="rname" (click)="openUser(r)">
                     <strong>{{ r.author?.name || 'Usuario' }}</strong>
                     @if (r.isCritic) { <span class="critic-tag">🎬 Crítico</span> }
                   </div>
@@ -144,7 +145,7 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
                     <app-star-rating [value]="r.rating" [size]="13" [color]="r.isCritic ? '#f5c518' : '#21d07a'"></app-star-rating>
                     <span class="rdate">{{ formatDate(r.createdAt) }}</span>
                   </div>
-                  @if (r.text) { <p class="rtext">{{ r.text }}</p> }
+                  @if (r.text) { <app-expandable-text [text]="r.text"></app-expandable-text> }
                 </div>
               </div>
             }
@@ -170,7 +171,7 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
     .section { padding: 16px 20px 0; }
     .overview { color: var(--ion-text-color); font-size: 14px; line-height: 1.5; opacity: 0.9; }
     .hscroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
-    .cast { width: 92px; flex: 0 0 auto; }
+    .cast { width: 92px; flex: 0 0 auto; cursor: pointer; }
     .cast img, .cast-empty { width: 92px; height: 112px; border-radius: 10px; object-fit: cover; background: var(--ion-color-step-150, #374151); }
     .cast-empty { display: flex; align-items: center; justify-content: center; font-size: 28px; }
     .cname { display: block; font-size: 12px; font-weight: 700; margin-top: 6px; }
@@ -183,10 +184,10 @@ import { ScoreBadgeComponent } from '../../components/score-badge.component';
     .my-actions { display: flex; gap: 8px; margin-top: 12px; }
     .rtext { font-size: 14px; line-height: 1.45; margin: 8px 0 0; opacity: 0.92; }
     .review { display: flex; gap: 10px; background: var(--ion-color-step-100, #1f2937); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
-    .ava { width: 40px; height: 40px; }
+    .ava { width: 40px; height: 40px; cursor: pointer; }
     .ava-letter { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--ion-color-primary); color: #fff; font-weight: 800; border-radius: 50%; }
     .rbody { flex: 1; min-width: 0; }
-    .rname { display: flex; align-items: center; gap: 8px; }
+    .rname { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .critic-tag { font-size: 10px; font-weight: 800; color: #f5c518; background: var(--ion-color-step-150, #374151); border-radius: 6px; padding: 2px 6px; }
     .rdate { font-size: 11px; color: var(--ion-color-medium); }
   `],
@@ -237,6 +238,19 @@ export class MovieDetailPage {
 
   writeReview(): void {
     this.router.navigate(['/review', this.movieId]);
+  }
+
+  // Abre el perfil del actor. Si el título se cacheó sin id de persona,
+  // el backend lo resuelve buscando por nombre en TMDB.
+  openPerson(c: CastMember): void {
+    this.router.navigate(['/person'], {
+      queryParams: { id: c.tmdbPersonId || undefined, name: c.name },
+    });
+  }
+
+  // Abre el perfil público del autor de una reseña.
+  openUser(r: Review): void {
+    if (r.userId) this.router.navigate(['/users', r.userId]);
   }
 
   editReview(reviewId: string): void {

@@ -28,7 +28,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     .stars.editable { cursor: pointer; }
     .layer { position: absolute; top: 0; left: 0; display: flex; overflow: hidden; white-space: nowrap; }
     .layer.empty { color: rgba(255, 255, 255, 0.22); }
-    .star { text-align: center; line-height: 1.15; }
+    /* flex: 0 0 auto evita que las estrellas de color se encojan al recortar
+       el ancho de la capa "fill" y queden desalineadas con las vacías. */
+    .star { flex: 0 0 auto; text-align: center; line-height: 1.15; }
   `],
 })
 export class StarRatingComponent {

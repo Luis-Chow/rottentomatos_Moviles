@@ -10,13 +10,15 @@ import { AuthService } from '../../services/auth.service';
 import { MyReview } from '../../models';
 import { httpErrorMessage } from '../../utils/error';
 import { StarRatingComponent } from '../../components/star-rating.component';
+import { ExpandableTextComponent } from '../../components/expandable-text.component';
 
 @Component({
   selector: 'app-my-reviews',
   standalone: true,
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonChip,
-    IonCard, IonButton, IonIcon, IonRefresher, IonRefresherContent, StarRatingComponent,
+    IonCard, IonButton, IonIcon, IonRefresher, IonRefresherContent,
+    StarRatingComponent, ExpandableTextComponent,
   ],
   template: `
     <ion-header>
@@ -54,7 +56,7 @@ import { StarRatingComponent } from '../../components/star-rating.component';
                       <span class="score">{{ r.rating.toFixed(1) }}</span>
                       @if (r.isCritic) { <span class="ct">🎬</span> }
                     </div>
-                    @if (r.text) { <p class="txt">{{ r.text }}</p> }
+                    @if (r.text) { <app-expandable-text [text]="r.text" [limit]="150"></app-expandable-text> }
                   </div>
                 </div>
                 <div class="actions">
@@ -82,7 +84,6 @@ import { StarRatingComponent } from '../../components/star-rating.component';
     .stars-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
     .score { font-size: 13px; font-weight: 700; }
     .ct { font-size: 12px; }
-    .txt { font-size: 13px; color: var(--ion-color-medium); margin: 6px 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .actions { display: flex; flex-direction: column; }
   `],
 })
