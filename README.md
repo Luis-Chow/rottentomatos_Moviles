@@ -4,10 +4,6 @@ App móvil hecha con **Ionic + Angular** (standalone) estilo Rotten Tomatoes / L
 Consume un backend **Express + MongoDB + JWT** (carpeta `../rotten-tomatos-backend`),
 que a su vez usa **TMDB** como API externa de películas/series reales.
 
-> Estado: **frontend completo**. El backend está como carpeta scaffold (siguiente fase).
-> Mientras no exista el backend, las pantallas que llaman a la API mostrarán
-> "No se pudo conectar con el servidor".
-
 ## Requisitos del enunciado y dónde se cumplen
 
 | Requisito | Dónde |
@@ -18,6 +14,8 @@ que a su vez usa **TMDB** como API externa de películas/series reales.
 | API externa + cache en DB propia | `pages/search` → TMDB vía backend (`/tmdb/search`, `/tmdb/import`) |
 | Info de la película | `pages/movie-detail`: sinopsis, fecha, actores, carátula + galería, géneros, duración |
 | Puntaje de usuarios + diferencia Usuarios/Críticos | `components/score-badge` (dos promedios), flag `isCritic` |
+| Perfil público de usuarios (sus reseñas) | `pages/user-profile` (ruta `/users/:id`, enlazado desde cada reseña) |
+| Perfil de actor con filmografía (TMDB) | `pages/person` (ruta `/person`, enlazado desde el reparto) |
 
 ## Cómo correr
 
@@ -29,8 +27,9 @@ npm start            # = ng serve  →  http://localhost:8100 (o 4200)
 ```
 
 ### Configurar el backend
-Edita `src/environments/environment.ts` y pon la URL del backend en `apiUrl`
-(SIN `/api` al final). Vacío => `http://localhost:4000`.
+La URL del backend se define en `src/environments/environment.ts` (desarrollo)
+y `environment.prod.ts` (build de producción / APK), campo `apiUrl` sin `/api`
+al final. Vacío equivale a `http://localhost:4000`.
 
 ```ts
 export const environment = { production: false, apiUrl: '' };
@@ -38,23 +37,22 @@ export const environment = { production: false, apiUrl: '' };
 
 ### Generar APK (Capacitor)
 ```bash
-npm run build
-npx cap add android
-npx cap sync
-npx cap open android   # build del APK desde Android Studio
+build-apk.cmd   # Angular build + Capacitor sync + Gradle assembleDebug
 ```
+Requiere JDK 21 y Android SDK en `%LOCALAPPDATA%\Android`. El APK queda en
+`android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Estructura
 
 ```
 src/
   app/
-    components/   star-rating, score-badge
+    components/   star-rating, score-badge, expandable-text
     constants/    genres.ts (categorías + normalización de acentos)
     guards/       auth.guard.ts (authGuard / guestGuard)
     models/       index.ts (interfaces)
-    pages/        login, register, tabs, catalog, search,
-                  movie-detail, review-form, my-reviews, profile
+    pages/        login, register, tabs, catalog, search, movie-detail,
+                  review-form, my-reviews, profile, user-profile, person
     services/     api.service, auth.service, data.service, auth.interceptor
     utils/        error.ts
     app.routes.ts, app.component.ts

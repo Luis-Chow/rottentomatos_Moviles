@@ -1,8 +1,5 @@
-// Entorno de producción (build para APK / release).
-// Para la APK en un teléfono real, el celular NO ve "localhost" del PC:
-// se usa la IP LAN del PC (mismo WiFi) donde corre el backend.
-// Si tu IP cambia, actualiza esta línea y recompila la APK.
-// Si despliegas el backend (Railway/Render), pon aquí esa URL https.
+// Entorno de producción (build de la APK / release).
+// apiUrl: URL base del backend desplegado, sin "/api".
 export const environment = {
   production: true,
   apiUrl: 'https://rottentomatosmovilesbackend-production.up.railway.app',

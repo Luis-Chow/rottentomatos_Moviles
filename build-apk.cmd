@@ -1,11 +1,10 @@
 @echo off
 REM ============================================================
-REM  Recompila el APK de Android de RottenTomatos.
-REM  Uso: doble clic, o desde una terminal:  build-apk.cmd
-REM
-REM  Si cambiaste de red WiFi, primero actualiza la IP de tu PC en:
-REM    src\environments\environment.prod.ts  (campo apiUrl)
-REM  y luego corre este script.
+REM  Compila el APK debug de RottenTomatos.
+REM  Pasos: build de Angular -> Capacitor sync -> Gradle assembleDebug.
+REM  Requisitos: JDK 21 y Android SDK en %LOCALAPPDATA%\Android.
+REM  La URL del backend se define en src\environments\environment.prod.ts.
+REM  Uso: build-apk.cmd
 REM ============================================================
 setlocal
 cd /d "%~dp0"
